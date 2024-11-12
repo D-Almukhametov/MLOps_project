@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "mlops-project"
+version = "0.1.0"
+description = "Studying MLOps"
+authors = ["Denis Almukhametov, Ilya Yarusskiy"]
+license = "None"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = {version = "0.115.0", extras = ["all"]}
+scikit-learn = "1.5.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
