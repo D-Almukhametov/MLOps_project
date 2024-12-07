@@ -1,3 +1,5 @@
 .venv/
 models/
 *.ipynb
+data/
+.dvc/
