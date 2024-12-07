@@ -21,7 +21,7 @@ class ClassModel:
         model.fit(X, y)
         self.trained_models[model_name] = model
         PATH = 'models/' + model_name + '.pickle'
-        with open(PATH, mode='wb') as f:
+        with open(PATH, mode='wb+') as f:
             pickle.dump(model, f)
         return f'{model_name} была обучена'
     
