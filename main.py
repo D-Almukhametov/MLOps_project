@@ -34,14 +34,10 @@ async def get_methods():
     return {"message": classModel.get_available_classes()}
 
 
-@app.get("/train")
+@app.post("/train")
 async def train(train_item: TrainItem):
     model_name = train_item.modelName
     parameters = train_item.parameters
-    mlflow.set_tracking_uri("http://localhost:5000")
-    mlflow.set_experiment("Fastapi_experiment")
-    with mlflow.start_run():
-        mlflow.log_params(train_item.parameters.dict())
     X = train_item.X
     y = train_item.y
     return {"message": classModel.train(model_name, parameters, X, y)}
@@ -51,7 +47,7 @@ async def train(train_item: TrainItem):
 async def get_trained_models():
     return {"trained_models": list(classModel.trained_models.keys())}
 
-@app.get("/predict")
+@app.post("/predict")
 async def predict(predict_item: PredictItem):
     model_name = predict_item.modelName
     X = predict_item.X
@@ -81,3 +77,7 @@ def upload(file: UploadFile = File(...)):
         file.file.close()
 
     return {"message": f"Successfully uploaded {file.filename}"}
+
+@app.get("/")
+async def read_root():
+    return {"message": "Hello from FastAPI!"}
