@@ -19,16 +19,14 @@ def test_upload_dataset_with_mock(tmp_path):
     test_file = tmp_path / "test_dataset.csv"
     test_file.write_text("col1,col2\n1,2\n3,4")
 
-    # Открываем файл для передачи в запрос
     with open(test_file, "rb") as f:
         response = client.post(
             "/upload_dataset", files={"file": ("test_dataset.csv", f, "text/csv")}
         )
-    # Проверяем, что запрос завершился успешно
+
     assert response.status_code == 200
     assert response.json() == {"message": "Successfully uploaded test_dataset.csv"}
 
-    # Проверяем, что метод fput_object вызван с правильными аргументами
     minio_client.fput_object.assert_called_once_with(
         "datasets", "test_dataset.csv", "test_dataset.csv"
     )

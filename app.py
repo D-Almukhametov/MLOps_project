@@ -7,9 +7,9 @@ from minio import Minio
 import mlflow
 
 # Инициализация MinIO клиента с параметрами из переменных окружения
-minio_access_key: str = os.getenv("MINIO_ROOT_USER", "minioadmin")
-minio_secret_key: str = os.getenv("MINIO_ROOT_PASSWORD", "minioadmin")
-minio_url: str = os.getenv("MINIO_URL", "minio:9000")
+minio_access_key = os.getenv("MINIO_ROOT_USER", "minioadmin")
+minio_secret_key = os.getenv("MINIO_ROOT_PASSWORD", "minioadmin")
+minio_url = os.getenv("MINIO_URL", "minio:9000")
 
 minio_client: Minio = Minio(
     minio_url,
@@ -25,10 +25,6 @@ models_manager: ModelsManager = ModelsManager()
 # Настройка URI для отслеживания mlflow
 mlflow.set_tracking_uri("http://mlflow:6000")
 mlflow.set_experiment("FastAPI_Experiment")
-
-# Установка переменных для MinIO в окружение
-os.environ["AWS_ACCESS_KEY_ID"] = minio_access_key
-os.environ["AWS_SECRET_ACCESS_KEY"] = minio_secret_key
 
 
 @app.get("/get_available_methods")
