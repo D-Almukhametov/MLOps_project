@@ -1,0 +1,48 @@
+stages:
+  - build
+  - test
+  - lint
+
+# Переменные для DockerHub
+variables:
+  DOCKER_IMAGE: "dalmukhametov/mlops_project:latest"
+  DOCKER_DRIVER: overlay2
+
+# Сборка Docker-образа и пуш в DockerHub
+build_image:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:19.03.12-dind
+  script:
+    - echo "Building Docker image..."
+    - docker build -f Dockerfile_fastapi -t $DOCKER_IMAGE .
+    - echo "Logging into DockerHub..."
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - docker push $DOCKER_IMAGE
+
+
+# Запуск линтера (flake8)
+run_linter:
+  stage: lint
+  image: python:3.10-slim-bullseye
+  script:
+    - echo "Installing flake8..."
+    - pip install flake8
+    - echo "Running flake8..."
+    - flake8 .
+  allow_failure: true
+
+
+# Запуск тестов с использованием pytest
+run_tests:
+  stage: test
+  image: python:3.10-slim-bullseye
+  script:
+    - echo "Installing dependencies..."
+    - pip install --upgrade pip
+    - pip install pytest
+    - pip install -r requirements.txt
+    - echo "Running tests..."
+    - pytest --maxfail=1 --disable-warnings -q
+  allow_failure: true

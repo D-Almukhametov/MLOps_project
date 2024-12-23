@@ -1,0 +1,15 @@
+scikit-learn
+fastapi[all]
+streamlit
+psutil
+minio
+plotly
+python-dotenv
+mlflow
+dvc
+pytest
+pip-tools
+black
+ruff
+mypy
+pytest

@@ -1,0 +1,53 @@
+services:
+  minio:
+    image: bitnami/minio:2022
+    platform: linux/amd64
+    container_name: minio
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - MINIO_ADDRESS="minio:9000"
+    ports:
+      - "9000:9000" 
+      - "9001:9001" 
+    volumes:
+      - minio_data:/data
+
+  fastapi:
+    image: my_fastapi:latest
+    build:
+      context: .
+      dockerfile: Dockerfile_fastapi
+    container_name: fastapi
+    ports:
+      - "8000:8000"
+    depends_on:
+      - minio
+    environment:
+      - MINIO_URL=minio:9000
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.3.2
+    platform: linux/amd64
+    container_name: mlflow
+    ports:
+      - "8080:6000"
+    environment:
+      - MLFLOW_SERVER_FILE_STORE=/mlflow
+      - MLFLOW_SERVER_DEFAULT_ARTIFACT_ROOT=/mlflow
+    volumes:
+      - mlflow_data:/mlflow
+    command: >
+      mlflow server
+      --backend-store-uri file:////mlflow/mlflow.db
+      --default-artifact-root file:///mlflow
+      --host 0.0.0.0
+      --port 6000
+
+
+volumes:
+  minio_data:
+  mlflow_data:
